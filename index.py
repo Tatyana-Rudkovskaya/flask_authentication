@@ -3,6 +3,7 @@ import flask
 import flask_sqlalchemy
 import flask_praetorian
 import flask_cors
+from flask_mail import Mail, Message
 
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
@@ -14,7 +15,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Text, unique=True)
     password = db.Column(db.Text)
-    useremail = db.Column(db.Text)
+    useremail = db.Column(db.Text, unique=True)
     roles = db.Column(db.Text)
     is_active = db.Column(db.Boolean, default=True, server_default='true')
 
@@ -40,10 +41,33 @@ class User(db.Model):
     def is_valid(self):
         return self.is_active
 
-
 # Initialize flask app for the example
 app = flask.Flask(__name__, static_folder='../build', static_url_path=None)
 app.debug = True
+mail = Mail(app)
+
+# main config
+app.config['SECRET_KEY'] = 'my_precious'
+app.config['SECURITY_PASSWORD_SALT'] = 'my_precious_two'
+app.config['DEBUG'] = False
+app.config['BCRYPT_LOG_ROUNDS'] = 13
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['DEBUG_TB_ENABLED'] = False
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+
+# mail settings
+app.config['[MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['[MAIL_PORT'] = 465
+app.config['[MAIL_USE_TLS'] = False
+app.config['[MAIL_USE_SSL'] = True
+
+# gmail authentication
+app.config['MAIL_USERNAME'] = 'Tatyana.emails@gmail.com'
+app.config['MAIL_PASSWORD'] = '123456Tatyana'
+
+# mail accounts
+app.config['MAIL_DEFAULT_SENDER'] = 'from@example.com'
+
 app.config['SECRET_KEY'] = 'top secret'
 app.config['JWT_ACCESS_LIFESPAN'] = {'hours': 1}
 app.config['JWT_REFRESH_LIFESPAN'] = {'days': 30}
@@ -138,14 +162,19 @@ def register():
     # password hashen
     password_hash=guard.hash_password(password)
 
-    db.session.add(User(
-          username=username,
-          password=password_hash,
-          useremail=useremail, 
-          roles='admin'
+    if db.session.query(User).filter_by(useremail=useremail).count() < 1:
+        db.session.add(User(
+            username=username,
+            password=password_hash,
+            useremail=useremail, 
+            roles='admin'
 		))
-    db.session.commit()
-    ret = {'message': "Toll"}
+        db.session.commit()
+        # TODO SEND EMAIL configuration still WIP work in progress
+        send_email(useremail, "Welcom to my Aplication!", "Hey" )
+        ret = {'message': "Toll"}
+    else:
+        ret = {'message': "Du bist schon dort!"}
     return ret, 200
 ##############################
 
@@ -158,6 +187,15 @@ def catch_all(path):
         return app.send_static_file(path)
     else:
         return app.send_static_file('index.html')
+
+def send_email(to, subject, template):
+    msg = Message(
+        subject,
+        recipients=[to],
+        html=template,
+        sender=app.config['MAIL_DEFAULT_SENDER']
+    )
+    mail.send(msg)
 
 # Run the example
 if __name__ == '__main__':
