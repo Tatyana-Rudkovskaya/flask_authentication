@@ -43,7 +43,7 @@ class User(db.Model):
         return self.is_active
 
 # Initialize flask app for the example
-app = flask.Flask(__name__, static_folder='../build', static_url_path=None)
+app = flask.Flask(__name__, static_folder='static', static_url_path=None)
 app.debug = True
 mail = Mail(app)
 
@@ -199,7 +199,7 @@ def register():
 @app.route('/<path:path>')
 def catch_all(path):
     print("Hello from catch all")
-    if path != "" and os.path.exists(os.path.join('..','build',path)):
+    if path != "" and os.path.exists(os.path.join('..','static',path)):
         return app.send_static_file(path)
     else:
         return app.send_static_file('index.html')
