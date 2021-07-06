@@ -4,6 +4,7 @@ import flask_sqlalchemy
 import flask_praetorian
 import flask_cors
 from flask_mail import Mail, Message
+from flask import render_template, request
 
 db = flask_sqlalchemy.SQLAlchemy()
 guard = flask_praetorian.Praetorian()
@@ -99,6 +100,18 @@ with app.app_context():
 @app.route('/api/')
 def home():
   	return {"Hello": "World"}, 200
+
+messages = ['Hey', "tschua", "hallo"]
+
+@app.route('/hallo/', methods = ['POST', 'GET'])
+def hallo():
+    if request.method == 'GET':
+        return render_template('hello.html',messages = messages)
+    if request.method == 'POST':
+        form_data = request.form
+        print(form_data)
+        messages.append(form_data["message"])
+        return render_template('hello.html',messages = messages)
 
 @app.route('/api/login', methods=['POST'])
 def login():

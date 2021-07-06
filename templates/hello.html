@@ -1,0 +1,29 @@
+<!doctype html>
+<head>
+
+    <title>Tschuess from Templates</title>
+    <style>
+        h1 {
+            color: brown;
+        }
+    </style>
+</head>
+<body>
+    <form action="/hallo" method = "POST">
+        <p>Name <input type = "text" name = "name" /></p>
+        <p>Message <input type = "text" name = "message" /></p>
+        <p><input type = "submit" value = "Submit" /></p>
+    </form>
+{% if messages %}
+<h1>All messages</h1>
+<table>
+    <tbody>
+        {% for message in messages %}
+        <tr>
+            <td>{{message}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+</body>
