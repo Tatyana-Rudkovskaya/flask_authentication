@@ -1,21 +1,16 @@
-<!doctype html>
-<head>
+{% extends 'base.html'%}
 
-    <title>Tschuess from Templates</title>
-    <style>
-        h1 {
-            color: brown;
-        }
-    </style>
-</head>
-<body>
-    <form action="/hallo" method = "POST">
-        <p>Name <input type = "text" name = "name" /></p>
-        <p>Message <input type = "text" name = "message" /></p>
-        <p><input type = "submit" value = "Submit" /></p>
-    </form>
+{%block header %}
+<h1>Hello page</h1>
+{% endblock %}
+
+{% block content %}
+<form action="/hallo" method="POST">
+    <p>Name <input type="text" name="name" /></p>
+    <p>Message <input type="text" name="message" /></p>
+    <p><input type="submit" value="Submit" /></p>
+</form>
 {% if messages %}
-<h1>All messages</h1>
 <table>
     <tbody>
         {% for message in messages %}
@@ -26,4 +21,4 @@
     </tbody>
 </table>
 {% endif %}
-</body>
+{% endblock %}

@@ -1,0 +1,19 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - Flaskr</title>
+<style>
+    h1 {
+        color: brown;
+    }
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav>
+    <h1>Flaskr</h1>
+</nav>
+<section class="content">
+    <!--  TEMPLATE INHERITACNCE - VERERBUNG-->
+    <!--  Hier werden die template partials eingefuegt-->
+    <header>
+        {% block header %}{% endblock %}
+    </header>
+    {% block content %}{% endblock %}
+</section>

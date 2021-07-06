@@ -112,6 +112,9 @@ def hallo():
         print(form_data)
         messages.append(form_data["message"])
         return render_template('hello.html',messages = messages)
+@app.route('/contact/', methods = ['GET'])
+def contact():
+    return render_template('contact.html')
 
 @app.route('/api/login', methods=['POST'])
 def login():
