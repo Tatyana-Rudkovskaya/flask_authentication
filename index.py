@@ -3,6 +3,7 @@ import flask
 import flask_sqlalchemy
 import flask_praetorian
 import flask_cors
+import requests
 from flask_mail import Mail, Message
 from flask import render_template, request
 
@@ -131,6 +132,14 @@ def login():
     user = guard.authenticate(username, password)
     ret = {'access_token': guard.encode_jwt_token(user)}
     return ret, 200
+
+@app.route('/contact', methods=['POST'])
+def contact_post():
+    myobj = {'chat_id': '746265890', 'text': 'New message from: '+request.form['name'] + " with the mail: " + request.form['email'] +" Message: " + request.form['subject'] + request.form['message'] }
+    response = requests.post(
+            'https://api.telegram.org/bot1886989245:'+os.environ.get("TELEGRAM_API_KEY")+'/sendMessage', data=myobj)  
+    print(response)
+    return render_template('contact.html')
 
 @app.route('/api/refresh', methods=['POST'])
 def refresh():
